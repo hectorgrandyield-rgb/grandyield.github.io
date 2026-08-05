@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Animación de aparición al hacer scroll (tarjetas de nicho y de servicio)
 document.addEventListener('DOMContentLoaded', function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var cards = document.querySelectorAll('.niche-card, .service-card');
+  var cards = document.querySelectorAll('.niche-card, .service-card, .mockup-window');
 
   if (reduceMotion || !('IntersectionObserver' in window) || !cards.length) return;
 
@@ -204,4 +204,54 @@ document.addEventListener('DOMContentLoaded', function () {
   }, { passive: true });
 
   updateShrink();
+});
+
+// "Así trabajamos": la ventana estilo mockup va mostrando un paso a la vez,
+// avanzando solo cada pocos segundos, en loop. Con reduced-motion se queda
+// fijo en el paso 1 (sin animar) en vez de rotar.
+document.addEventListener('DOMContentLoaded', function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var steps = document.querySelectorAll('.process-step');
+  var slides = document.querySelectorAll('.mockup-slide');
+  var layout = document.querySelector('.process-layout');
+
+  if (reduceMotion || !steps.length || !slides.length) return;
+
+  var current = 0;
+  var interval = null;
+
+  function setActive(index) {
+    steps.forEach(function (step, i) { step.classList.toggle('is-active', i === index); });
+    slides.forEach(function (slide, i) { slide.classList.toggle('is-active', i === index); });
+  }
+
+  function advance() {
+    current = (current + 1) % steps.length;
+    setActive(current);
+  }
+
+  function start() {
+    if (!interval) interval = window.setInterval(advance, 3800);
+  }
+  function stop() {
+    window.clearInterval(interval);
+    interval = null;
+  }
+
+  start();
+
+  if (layout) {
+    layout.addEventListener('mouseenter', stop);
+    layout.addEventListener('mouseleave', start);
+  }
+
+  // También se puede ir directo a un paso apretando su fila en la lista.
+  steps.forEach(function (step, i) {
+    step.addEventListener('click', function () {
+      current = i;
+      setActive(current);
+      stop();
+      start();
+    });
+  });
 });

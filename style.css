@@ -378,13 +378,15 @@ main > section {
 
 /* ============ Aparición al hacer scroll ============ */
 .js-reveal .niche-card,
-.js-reveal .service-card {
+.js-reveal .service-card,
+.js-reveal .mockup-window {
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .js-reveal .niche-card.is-visible,
-.js-reveal .service-card.is-visible {
+.js-reveal .service-card.is-visible,
+.js-reveal .mockup-window.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -410,6 +412,46 @@ main > section {
     0 0 16px rgba(255,255,255,0.4);
 }
 
+/* ============ Stack (carrusel infinito) ============ */
+.stack-heading { padding-bottom: 0; }
+
+/* Sin section-inner alrededor a propósito: así ocupa todo el ancho de la
+   pantalla de punta a punta, no solo el ancho centrado de 1100px del resto
+   del contenido. */
+.stack-marquee {
+  padding: 2rem 0 clamp(3.5rem, 6vw, 5.5rem);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.stack-track {
+  display: flex;
+  width: max-content;
+  gap: 9rem;
+  animation: stackScroll 60s linear infinite;
+}
+.stack-marquee:hover .stack-track { animation-play-state: paused; }
+
+@keyframes stackScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* la mitad = el ancho de un set completo (está duplicado) */
+}
+
+.stack-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.stack-logo {
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+}
+
 /* ============ About ============ */
 .about {
   background: rgba(255,255,255,0.02);
@@ -418,6 +460,141 @@ main > section {
 .about-inner { max-width: 780px; text-align: left; }
 .about h2 { margin-bottom: 1.25rem; font-size: clamp(1.6rem, 4vw, 2.2rem); }
 .about p { color: var(--text-muted); font-size: 1.05rem; text-shadow: 0 1px 10px rgba(0,0,0,0.55); }
+
+/* ============ Así trabajamos (mockup estilo ventana) ============ */
+.process-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  margin-top: 2.75rem;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .process-layout { grid-template-columns: 0.75fr 1.25fr; gap: 3.5rem; }
+}
+
+.process-steps { display: flex; flex-direction: column; gap: 1rem; }
+.process-step {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+.process-step.is-active {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+.process-num {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-muted);
+  transition: background 0.35s ease, color 0.35s ease;
+}
+.process-step.is-active .process-num { background: #ffffff; color: var(--bg-black); }
+.process-step h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+.process-step p { color: var(--text-muted); font-size: 0.92rem; }
+
+/* ---- ventana estilo macOS ---- */
+.mockup-window {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+.mockup-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mockup-dot { width: 11px; height: 11px; border-radius: 50%; }
+.dot-red { background: #ff5f56; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #27c93f; }
+.mockup-title {
+  margin-left: 0.6rem;
+  font-size: 0.78rem;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--text-muted);
+}
+.mockup-screen { position: relative; height: 420px; }
+.mockup-slide {
+  position: absolute;
+  inset: 0;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.mockup-slide.is-active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* mini-mockup: chat */
+.mock-chat { display: flex; flex-direction: column; gap: 0.85rem; width: 100%; max-width: 360px; }
+.mock-bubble { padding: 0.75rem 1.15rem; border-radius: 16px; font-size: 0.95rem; max-width: 85%; line-height: 1.4; }
+.mock-bubble-in { align-self: flex-start; background: rgba(255,255,255,0.08); border-bottom-left-radius: 4px; }
+.mock-bubble-out { align-self: flex-end; background: #ffffff; color: var(--bg-black); border-bottom-right-radius: 4px; }
+.mock-typing {
+  align-self: flex-start;
+  display: flex;
+  gap: 4px;
+  padding: 0.6rem 0.9rem;
+  background: rgba(255,255,255,0.08);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+}
+.mock-typing span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text-muted);
+  animation: typingBounce 1.2s infinite ease-in-out;
+}
+.mock-typing span:nth-child(2) { animation-delay: 0.15s; }
+.mock-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* mini-mockup: documento */
+.mock-doc { display: flex; flex-direction: column; gap: 1.1rem; width: 100%; max-width: 320px; }
+.mock-doc-title { width: 60%; height: 17px; border-radius: 4px; background: rgba(255,255,255,0.25); margin-bottom: 0.4rem; }
+.mock-doc-line { display: flex; align-items: center; gap: 0.6rem; }
+.mock-check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  background: #ffffff; color: var(--bg-black);
+  font-size: 0.65rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.mock-bar { flex: 1; height: 12px; border-radius: 4px; background: rgba(255,255,255,0.12); }
+.mock-bar.short { max-width: 60%; }
+
+/* mini-mockup: progreso */
+.mock-progress { display: flex; flex-direction: column; gap: 1.4rem; width: 100%; max-width: 360px; }
+.mock-progress-row span { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.35rem; }
+.mock-progress-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.mock-progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ffffff, #8ea1ff); }
+
+/* mini-mockup: gráfico */
+.mock-chart { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+.mock-chart-svg { width: 270px; height: 110px; }
+.mock-chart-svg polyline { fill: none; stroke: #ffffff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.mock-chart-stat { font-size: 0.95rem; font-weight: 700; color: var(--text-muted); }
 
 /* ============ CTA final ============ */
 .cta-final {
@@ -555,4 +732,7 @@ main > section {
 @media (prefers-reduced-motion: reduce) {
   body { animation: none; }
   .niche-card, .service-card { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .stack-track { animation: none; }
+  .mockup-slide { transition: none; }
+  .mock-typing span { animation: none; }
 }
